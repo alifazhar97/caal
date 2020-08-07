@@ -3,6 +3,7 @@
 welcome:   .asciiz "\nWelcome to  Restaurant Inventory System\n"
 home: .asciiz "Choose option:"
 option: .asciiz "\n(1)Display menu    (2)Fetch    (3)Exit\n"
+fetchoutmsg: .asciiz"\nPut negative (-) value for fetched out." 
 
 #list of inventory
 rice: .asciiz "\n1) rice   "
@@ -81,6 +82,10 @@ displayInventory: 		#print elements in inventory array
         j displayInventory	#loop array to other index element until bgt instruction complete
 
 fetchItem:
+	li $v0,4
+	la $a0, fetchoutmsg
+	syscall
+	
 	la $t0, inventory
 	la $t1, quantity
 	
