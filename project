@@ -1,66 +1,249 @@
 .data
 
-welcome:   .asciiz "welcome to our restaurant\n"
-home: .asciiz "choose option: "
-option: .asciiz "(1)Display menu    (2)fetch\n"
+welcome:   .asciiz "\nWelcome to  Restaurant Inventory System\n"
+home: .asciiz "Choose option:"
+option: .asciiz "\n(1)Display menu    (2)Fetch    (3)Exit\n"
 
 #list of inventory
-rice: .asciiz "\n1) rice\n"
-noodle: .asciiz "2) noodle\n"
-chicken: .asciiz "3) chicken\n"
-fish: .asciiz "4) fish\n"
-meat: .asciiz "5) meat\n"
-tea: .asciiz "6) tea\n" 
-milo: .asciiz "7) milo\n"
-coffee: .asciiz "8) coffee\n"
-fruit: .asciiz "9) fruit"
-vegetables: .asciiz "10) vegetables"
+rice: .asciiz "\n1) rice   "
+noodle: .asciiz "\n2) noodle   "
+chicken: .asciiz "\n3) chicken   "
+fish: .asciiz "\n4) fish   "
+meat: .asciiz "\n5) meat   "
+tea: .asciiz "\n6) tea   " 
+milo: .asciiz "\n7) milo   "
+coffee: .asciiz "\n8) coffee   "
+fruit: .asciiz "\n9) fruit   "
+vegetables: .asciiz "\n10) vegetables   "
 
 inventory: .word rice, noodle, chicken, fish, meat, tea, milo, coffee, fruit, vegetables		#array of inventory list
+quantity: .word 23, 11, 22, 14, 8, 34, 10, 34, 36, 32										#array of quantity list
 
 iterator:	.word 0		#first index of array
 size:		.word 9	      	#last index of array
-	      	      	      	      	      	      
-.text          
-main:   
+
+string: .space 20 		#The string  array size 20
+write:.asciiz "\nPut password here-->"
+match:.asciiz "\npassword  match\n"
+nonmatch:.asciiz "\npassword dont match"
+strToCompare: .asciiz "12345\n"
+
+.text
+
+main:
+ #size of inventory array       
+        la $t0, inventory
+        la $t1, quantity
+        lw $t2, iterator
+        lw $t3, size
+        
 	li $v0, 4       	# print welcome msg
         la $a0, welcome  
         syscall 
-        
+
         li $v0, 4		# print option msg
         la $a0, option
         syscall
-  
+
         li $v0, 4		# print insruction msg
         la $a0, home
         syscall
-              
-        addi $t0, $zero, 1		#get input option
-        li $v0, 5
+        
+        addi $t4, $zero, 1
+        addi $t5, $zero, 2
+        addi $t9, $zero, 3
+        li $v0, 5		#get input option
         syscall
         
-        move $t1, $v0
-        bne $t0, $t1, display_array	#compare input element. if 1 go to display inventory list. else to to fetch
+	move $t6, $v0		#store in t0
+        beq $t4, $t6, displayInventory	#compare input element. if 1 go to display inventory list. else to to fetch
+ 	beq $t5, $t6, authenticate
+ 	beq $t9, $t6, endProgram 
+
+displayInventory: 		#print elements in inventory array  
  
- #size of inventory array       
-        la $t0, inventory
-        lw $t1, iterator
-        lw $t2, size
-        
- #print elements in inventory array
- display_array:
- 	#for() loop 
-	bgt $t1, $t2, exit_loop
-	sll $t3, $t1, 2 #t3= 4xi
-	addu $t3, $t3, $t0 #4i=4i + memory location of menu array
+        #for() loop 
+	bgt $t2, $t3, main
+	sll $t7, $t2, 2		#t4= 4xi
+	addu $t7, $t7, $t0 	#4i=4i + memory location of inventory array
+	sll $t8,  $t2, 2	#loop for quantity
+	addu $t8, $t8, $t1
 	
 	li $v0, 4		#print index element in array
-	lw $a0, 0($t3)
+	lw $a0, 0($t7)
         syscall
         
-        addi $t1, $t1, 1
+        li $v0, 1		#print index element in array
+	lw $a0, 0($t8)
+        syscall
         
-        j display_array		#loop array to other index element until bgt instruction complete
+        addi $t2, $t2, 1      
+        j displayInventory	#loop array to other index element until bgt instruction complete
+
+fetchItem:
+	la $t0, inventory
+	la $t1, quantity
+	
+	li $v0, 4		 #input +value for add,-value for sub
+	lw $a0, 0($t0)
+        syscall
         
-exit_loop:
+        li $v0,5
+        syscall
+        lw $a1, 0($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 0($t1)
+    
+	li $v0, 4		
+	lw $a0, 4($t0)
+        syscall
+        li $v0,5
+        syscall
         
+        lw $a1, 4($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 4($t1)
+
+	li $v0, 4		
+	lw $a0, 8($t0)
+        syscall
+        li $v0,5
+       
+         syscall
+        lw $a1, 8($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 8($t1)
+        
+        li $v0, 4		
+	lw $a0, 12($t0)
+        syscall
+        li $v0,5
+        
+        syscall
+        lw $a1, 12($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 12($t1)
+        
+        li $v0, 4		
+	lw $a0, 16($t0)
+        syscall
+        
+        li $v0,5
+        syscall
+        lw $a1, 16($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 16($t1)	
+        
+       	li $v0, 4		
+	lw $a0, 20($t0)
+        syscall
+       
+         li $v0,5
+        syscall
+        lw $a1, 20($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 20($t1)	
+        
+     	 li $v0, 4		
+	lw $a0, 24($t0)
+        syscall
+        li $v0,5
+        syscall
+        
+        lw $a1, 24($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 24($t1)	
+        
+        li $v0, 4		
+	lw $a0, 28($t0)
+        syscall
+        
+        li $v0,5
+        syscall
+        
+        lw $a1, 28($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 28($t1)	
+        
+        li $v0, 4		
+	lw $a0, 32($t0)
+        syscall
+        
+        li $v0,5
+        syscall
+       
+        lw $a1, 32($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 32($t1)	
+        
+     	li $v0, 4		
+	lw $a0, 36($t0)
+        syscall
+        li $v0,5
+        syscall
+        lw $a1, 36($t1)
+        sub $a1, $a1, $v0
+        sb $a1, 36($t1)	
+        		
+	jal main
+	
+authenticate:
+        li $v0,4 		#loads msg
+        la $a0,write
+        syscall
+
+        li $v0,8
+        la $a0,string
+        addi $a1,$zero,20
+        syscall 		#User input password
+
+        li $v0,8
+        la $a0,match 
+        addi $a1,$zero,20
+
+        la $a0,string 		#pass address of str1	
+        la $a1,strToCompare 	#pass address of str2
+        jal methodComp 		#call methodComp
+        beq $v0,$zero,ok 	#check result	
+
+        li $v0,4
+        la $a0,nonmatch
+        syscall
+
+        j authenticate
+ok:
+	li $v0,4
+	la $a0,match
+	syscall
+	jal fetchItem
+exit:
+	li $v0,10
+	syscall
+methodComp:
+	add $s0,$zero,$zero
+	add $s1,$zero,$a0
+	add $s2,$zero,$a1
+loop:
+	lb $s3($s1) 		#load a byte from each string
+	lb $s4($s2)
+	beqz $s3,checkt2 	#str1 end
+	beqz $s4,missmatch
+	slt $s5,$s3,$s4 	#compare two bytes
+	bnez $s5,missmatch
+	addi $s1,$s1,1 		#t1 points to the next byte of str1
+	addi $s2,$s2,1
+	j loop
+missmatch:
+	addi $v0,$zero,1
+	j endfunction
+checkt2:
+	bnez $s4,missmatch
+	add $v0,$zero,$zero
+endfunction:
+	jr $ra
+
+thresholdAlert:
+
+endProgram:
+	li $v0, 10
+	syscall
