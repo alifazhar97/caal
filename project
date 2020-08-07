@@ -25,7 +25,7 @@ size:		.word 9	      	#last index of array
 string: .space 20 		#The string  array size 20
 write:.asciiz "\nPut password here-->"
 match:.asciiz "\npassword  match\n"
-nonmatch:.asciiz "\npassword dont match"
+nonmatch:.asciiz "\npassword dont match\n"
 strToCompare: .asciiz "12345\n"
 
 .text
